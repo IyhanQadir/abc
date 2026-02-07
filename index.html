@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Will You Be My Valentine? 💕</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      min-height: 100vh;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #ffe6f2, #fff0f5, #ffe6e6);
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .container {
+      text-align: center;
+      padding: 40px 30px;
+      max-width: 520px;
+      background: rgba(255,255,255,0.92);
+      border-radius: 28px;
+      box-shadow: 0 20px 50px rgba(255,105,180,0.35);
+      border: 2px solid #ffb6c1;
+      backdrop-filter: blur(8px);
+      position: relative;
+      z-index: 10;
+    }
+    h1 { font-size: 3.1rem; color: #e91e63; margin-bottom: 0.4em; text-shadow: 0 2px 10px rgba(233,30,99,0.3); line-height: 1.1; }
+    .heart-emoji { font-size: 3.8rem; margin: 0 12px; animation: beat 1.4s infinite; display: inline-block; }
+    .message { font-size: 1rem; color: #444; margin: 30px 0 50px; line-height: 1.5; }
+    .buttons { display: flex; justify-content: center; gap: 60px; flex-wrap: wrap; }
+    .btn {
+      font-size: 1.5rem;
+      padding: 18px 60px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+    .yes { background: #ff3366; color: white; }
+    .yes:hover { background: #ff1a53; transform: scale(1.12) translateY(-4px); box-shadow: 0 15px 35px rgba(255,51,102,0.5); }
+    .no { background: #e0e0e0; color: #555; }
+    .no:hover { background: #d0d0d0; transform: scale(1.08); }
+    .no.pinkish { background: #ffccdd; color: #c2185b; }
+
+    /* Celebration overlay for tint & petals container */
+    #celebration {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+      z-index: 5;
+      background: rgba(255, 105, 180, 0.12); /* soft romantic overlay */
+    }
+    #celebration.active { opacity: 1; }
+
+    /* Falling petals - cover whole screen */
+    .petals-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 6;
+    }
+    .petal {
+      position: absolute;
+      top: -10vh;
+      font-size: 2rem;
+      color: #e91e63;
+      opacity: 0.85;
+      pointer-events: none;
+      animation: fall linear forwards;
+      will-change: transform;
+    }
+    @keyframes fall {
+      0% {
+        transform: translateY(-10vh) rotate(0deg) translateX(0);
+      }
+      100% {
+        transform: translateY(110vh) rotate(720deg) translateX(var(--sway));
+      }
+    }
+
+    /* Slideshow messages - below card */
+    #slideshow {
+      position: fixed;
+      bottom: 5%;
+      left: 0;
+      right: 0;
+      height: 40%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+      z-index: 7; /* below card but above petals if needed */
+      opacity: 0;
+      transition: opacity 1.2s ease;
+    }
+    #slideshow.active { opacity: 1; }
+    .slide {
+      position: absolute;
+      font-size: 3rem;
+      font-weight: bold;
+      color: #c2185b;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      text-align: center;
+      padding: 20px 40px;
+      opacity: 0;
+      transform: scale(0.85);
+      transition: all 2s ease-in-out;
+      max-width: 90%;
+      background: rgba(255,255,255,0.45);
+      border-radius: 20px;
+      backdrop-filter: blur(6px);
+    }
+    .slide.active { opacity: 1; transform: scale(1); }
+
+    @keyframes beat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+    @media (max-width: 500px) {
+      h1 { font-size: 2.6rem; }
+      .heart-emoji { font-size: 3.2rem; }
+      .btn { padding: 16px 50px; font-size: 1.35rem; }
+      .buttons { gap: 40px; }
+      .slide { font-size: 2.2rem; padding: 15px 25px; }
+      #slideshow { bottom: 10%; height: 50%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="celebration">
+    <div class="petals-container" id="petals"></div>
+  </div>
+
+  <div id="slideshow">
+    <div class="slide">You just made me the happiest person alive! 🥰💖</div>
+    <div class="slide">Every heartbeat says your name now... 💓</div>
+    <div class="slide">Can't wait to make so many memories with you 🌹</div>
+    <div class="slide">You're my favorite reason to smile every day 😘</div>
+    <div class="slide">Forever starts right now... with you 💞</div>
+  </div>
+
+  <div class="container">
+    <h1>Will You Be<br>My Valentine?<br>
+    <span class="heart-emoji">💖</span></h1>
+    <h5>And let me break your back<br> Not your heart.</h5>
+    <div class="message">
+      I've been smiling like an idiot<br>just thinking about asking you this...
+    </div>
+    <div class="buttons">
+      <button class="btn yes" onclick="yesClicked()">Yes! 💕</button>
+      <button class="btn no" id="noBtn">No 😢</button>
+    </div>
+  </div>
+
+  <script>
+    // Background floating hearts (always visible)
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.innerHTML = ['💗','💖','💕','❤️','🩷'][Math.floor(Math.random()*5)];
+      heart.style.position = 'fixed';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.top = '-5vh';
+      heart.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+      heart.style.opacity = Math.random() * 0.5 + 0.4;
+      heart.style.animation = `float ${Math.random() * 12 + 10}s linear infinite`;
+      heart.style.zIndex = '3';
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 25000);
+    }
+    setInterval(createHeart, 700);
+
+    // Falling petals on Yes
+    function createPetal() {
+      const petal = document.createElement('div');
+      petal.className = 'petal';
+      petal.innerHTML = ['🌹','🥀','🌸','🫧'][Math.floor(Math.random()*4)]; // rose + variations
+      petal.style.left = Math.random() * 100 + 'vw';
+      petal.style.fontSize = (Math.random() * 2.5 + 1.2) + 'rem';
+      petal.style.opacity = Math.random() * 0.4 + 0.55;
+      petal.style.animationDuration = (Math.random() * 10 + 8) + 's'; // 8-18s fall
+      petal.style.setProperty('--sway', (Math.random() * 200 - 100) + 'px'); // left/right drift
+      petal.style.animationDelay = Math.random() * 2 + 's';
+      document.getElementById('petals').appendChild(petal);
+      setTimeout(() => petal.remove(), 20000);
+    }
+
+    // Slideshow
+    const slides = document.querySelectorAll('.slide');
+    let currentSlide = 0;
+    function showNextSlide() {
+      slides.forEach(s => s.classList.remove('active'));
+      slides[currentSlide].classList.add('active');
+      currentSlide = (currentSlide + 1) % slides.length;
+    }
+
+    // Trigger on Yes
+    function yesClicked() {
+      alert("YAYYYYY! 🥰💖 You just made my heart explode with happiness! You are very special to me my babygorilla and i will take care of your ass all the time because you mean a lot to me. MMMMMmMMMMmMMMmMmmmmmWWWWwwwwWWWwwWWWWWWaaaAAAAAAaaaAAAAAaaaaHhhHHhhHHhhhHHHHHhhFUCKYOUhhhhHHHHHH.Wish i was there with you right now and i wouldve made you see how much I LOVE YOU!!!!!!");
+
+      const celebration = document.getElementById('celebration');
+      celebration.classList.add('active');
+
+      // Start dense petal rain
+      const petalInterval = setInterval(createPetal, 150); // adjust for density
+
+      // Slideshow
+      const slideshow = document.getElementById('slideshow');
+      slideshow.classList.add('active');
+      setTimeout(() => {
+        showNextSlide();
+        setInterval(showNextSlide, 5500);
+      }, 1500);
+
+      // Optional: stop petals after ~60s if you want (uncomment)
+      // setTimeout(() => clearInterval(petalInterval), 60000);
+    }
+
+    // No button logic (unchanged from working version)
+    const noBtn = document.getElementById('noBtn');
+    const stages = [
+      { text: "No 😢", class: "no" },
+      { text: "Are you sure? 😥", class: "no" },
+      { text: "Really really sure? 🥺", class: "no pinkish" },
+      { text: "But... whyyy? 💔", class: "no pinkish" },
+      { text: "Last chance... 🥹", class: "no pinkish" },
+      { text: "Okay fine... YES! 💖", class: "yes" }
+    ];
+    let clickCount = 0;
+
+    function updateNoButton() {
+      const stage = stages[clickCount];
+      noBtn.textContent = stage.text;
+      noBtn.className = 'btn ' + stage.class;
+      if (clickCount >= 5) {
+        noBtn.onclick = yesClicked;
+        noBtn.onmouseover = null;
+        noBtn.onmouseout = null;
+        noBtn.style.transform = 'scale(1.15)';
+      }
+    }
+
+    noBtn.addEventListener('click', () => {
+      clickCount++;
+      if (clickCount <= 5) {
+        updateNoButton();
+        if (clickCount < 5) {
+          noBtn.style.transition = 'transform 0.1s';
+          noBtn.style.transform = 'translateX(0)';
+          setTimeout(() => {
+            noBtn.style.transform = `translate(${Math.random()*30 - 15}px, ${Math.random()*20 - 10}px)`;
+            setTimeout(() => noBtn.style.transform = 'translate(0,0)', 200);
+          }, 10);
+        }
+        if (clickCount === 5) {
+          setTimeout(() => alert("See? I knew you'd come around 😏💕"), 300);
+        }
+      }
+    });
+
+    noBtn.addEventListener('mouseover', () => {
+      if (clickCount < 5) {
+        const x = Math.random() * 70 - 35;
+        const y = Math.random() * 50 - 25;
+        noBtn.style.transform = `translate(${x}px, ${y}px)`;
+      }
+    });
+
+    noBtn.addEventListener('mouseout', () => {
+      if (clickCount < 5) noBtn.style.transform = 'translate(0,0)';
+    });
+
+    updateNoButton(); // init
+  </script>
+
+</body>
+</html>
